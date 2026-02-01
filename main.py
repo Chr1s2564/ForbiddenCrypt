@@ -2,16 +2,29 @@ import pygame
 from sys import argv
 from constants import SCREEN_WIDTH, SCREEN_HEIGHT
 from logger import logger_setup
-
-
-pygame.init()
+from colors import *
 
 def main():
     if argv[1] == "debug":
         logger_setup()
-    if argv[1] != "debug":
-        pass
-    print(f"Runing pygame version: {pygame.version}")
+
+    pygame.init()
+    clock = pygame.time.Clock()
+    dt = 0
+
+    screen = pygame.display.set_mode((SCREEN_WIDTH * 1.01, SCREEN_HEIGHT * 1.01))
+    rectangle = pygame.Rect(13, 7, SCREEN_WIDTH, SCREEN_HEIGHT)
+
+    while True:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                return
+        screen.fill(BLACK)
+        #pygame.draw.rect(screen, GREY, rectangle)
+        pygame.display.flip()
+        dt = clock.tick(60) / 1000
+        
+
 
 
 
