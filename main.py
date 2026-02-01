@@ -12,8 +12,8 @@ def main():
     clock = pygame.time.Clock()
     dt = 0
 
-    screen = pygame.display.set_mode((SCREEN_WIDTH * 1.01, SCREEN_HEIGHT * 1.01))
-    rectangle = pygame.Rect(13, 7, SCREEN_WIDTH, SCREEN_HEIGHT)
+    screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+    #rectangle = pygame.Rect(13, 7, SCREEN_WIDTH, SCREEN_HEIGHT)
 
     while True:
         for event in pygame.event.get():
@@ -23,7 +23,7 @@ def main():
         #pygame.draw.rect(screen, GREY, rectangle)
         pygame.display.flip()
         dt = clock.tick(60) / 1000
-        
+
 
 
 
