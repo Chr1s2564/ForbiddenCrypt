@@ -1,8 +1,8 @@
 import pygame
 import os
 from circleshape import CircleShape
-from constants import PLAYER_RADIUS, PLAYER_TURN_SPEED, PLAYER_SPEED, PLAYER_SPRITES
-
+from constants import PLAYER_RADIUS, PLAYER_TURN_SPEED, PLAYER_SPEED, PLAYER_SPRITES, PLAYER_SHOOT_SPEED, SHOT_RADIUS
+from shot import PlayerShot
 
 #path to sprites // currently a test sprite
 image_path = os.path.join(PLAYER_SPRITES, "test_sprite.png")
@@ -20,8 +20,12 @@ class Player(CircleShape):
         rotated = pygame.transform.rotate(self.original_image, -self.rotation)
         screen.blit(rotated, self.rect)
 
-    def rotate(self, dt):
-        self.rotation += (PLAYER_TURN_SPEED * dt)
+    def rotate(self, dt, other):
+        if self.position.distance_to(other.position) < 110:
+            direction = pygame.Vector2(other.position) - self.position
+            if direction.length() > 0:
+                direction = direction.normalize()
+                self.rotation += (PLAYER_TURN_SPEED * dt) * direction
 
     def move_y(self, dt):
         unit_vector = pygame.Vector2(0, 1)
@@ -33,15 +37,29 @@ class Player(CircleShape):
         vector_speed = PLAYER_SPEED * unit_vector * dt
         self.position += vector_speed
 
+    def shoot(self):
+        shot = PlayerShot(self.position.x, self.position.y, SHOT_RADIUS )
+        unit_vector = pygame.Vector2(0, 1)
+        unit_vector.rotate(self.rotation)
+        unit_vector *= PLAYER_SHOOT_SPEED
+        shot.velocity = unit_vector
+
     def update(self, dt, other):
         keys = pygame.key.get_pressed()
+        is_moving = 0
         if keys[pygame.K_q] or keys[pygame.K_LEFT]:
             self.move_x(-dt)
+            is_moving = 1
         if keys[pygame.K_d] or keys[pygame.K_RIGHT]:
             self.move_x(dt)
+            is_moving = 1
         if keys[pygame.K_z] or keys[pygame.K_UP]:
             self.move_y(-dt)
+            is_moving = 1
         if keys[pygame.K_s] or keys[pygame.K_DOWN]:
             self.move_y(dt)
-
+            is_moving = 1
+        self.rotate(dt, other)
+        if self.position.distance_to(other.position) < 110 and is_moving == 0:
+            self.shoot()
         self.rect.center = self.position
