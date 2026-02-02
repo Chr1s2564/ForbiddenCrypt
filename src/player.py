@@ -33,7 +33,7 @@ class Player(CircleShape):
         vector_speed = PLAYER_SPEED * unit_vector * dt
         self.position += vector_speed
 
-    def update(self, dt):
+    def update(self, dt, other):
         keys = pygame.key.get_pressed()
         if keys[pygame.K_q] or keys[pygame.K_LEFT]:
             self.move_x(-dt)

@@ -20,10 +20,9 @@ class SkeletonHord(pygame.sprite.Sprite):
     def spawn(self, spawn_point):
         skeleton = Skeleton(spawn_point[0], spawn_point[1])
 
-    def update(self, dt):
+    def update(self, dt, other):
         self.spawn_timer += dt
         spawn_point = random.choice(self.spawn_points)
-        #position = spawn_point[1](random.uniform(0,1))
         self.spawn(spawn_point)
 
 

@@ -16,3 +16,6 @@ class CircleShape(pygame.sprite.Sprite):
 
     def update(self):
         pass
+
+    def collides_with(self, other):
+        pass

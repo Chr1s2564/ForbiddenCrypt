@@ -21,6 +21,3 @@ def logger_setup():
     logger.addHandler(file_out)
 
     return logger
-
-
-

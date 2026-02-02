@@ -22,17 +22,22 @@ class Skeleton(CircleShape):
     def rotate(self, dt):
         self.rotation += (dt * SKELETON_TURN_SPEED)
 
-    def move_x(self, dt):
-        unit_vector = pygame.Vector2(1, 0)
-        vector_speed = SKELETON_SPEED * dt * unit_vector
-        self.position += vector_speed
+    def move_towards(self, other, dt):
+        direction = pygame.Vector2(other.position) - self.position
+        if direction.length() > 0:
+            direction = direction.normalize()
+        self.position += direction * SKELETON_SPEED * dt
 
-    def move_y(self, dt):
-        unit_vector = pygame.Vector2(0, 1)
-        vector_speed = SKELETON_SPEED * dt * unit_vector
-        self.position += vector_speed
+    def move_away(self, other, dt):
+        direction = pygame.Vector2(other.position) + self.position
+        if direction.length() > 0:
+            direction = direction.normalize()
+        self.position += direction * SKELETON_SPEED * dt
 
-    def update(self, dt):
-        pass
+    def update(self, dt, other): # AI keeps player at shooting range but not to close
+        if self.position.distance_to(other.position) < 80:
+            self.move_away(other, dt)
+        if self.position.distance_to(other.position) > 150:
+            self.move_towards(other, dt)
 
-    ## AI will be in certain range from player
+        self.rect.center = self.position
