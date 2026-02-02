@@ -4,6 +4,8 @@ from constants import SCREEN_WIDTH, SCREEN_HEIGHT
 from logger import logger_setup
 from colors import *
 from player import Player
+from skeleton import Skeleton
+from skeleton_hord import SkeletonHord
 
 def main():
     if argv[1] == "debug":
@@ -17,11 +19,16 @@ def main():
     # Groups
     updatable = pygame.sprite.Group()
     drawable = pygame.sprite.Group()
+    skeletons = pygame.sprite.Group()
     Player.containers = (updatable, drawable)
+    Skeleton.containers = (skeletons, drawable, updatable)
+    SkeletonHord.containers = (updatable)
 
     # Objects
     screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
     player = Player(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2)
+    #skeleton_1 = Skeleton(1100, 680)
+    asteroid_hord = SkeletonHord()
 
     # Loop
     while True:

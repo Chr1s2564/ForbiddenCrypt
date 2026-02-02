@@ -1,12 +1,11 @@
 import pygame
 import os
 from circleshape import CircleShape
-from constants import PLAYER_RADIUS, PLAYER_TURN_SPEED, PLAYER_SPEED
+from constants import PLAYER_RADIUS, PLAYER_TURN_SPEED, PLAYER_SPEED, PLAYER_SPRITES
 
 
 #path to sprites // currently a test sprite
-base_path = os.path.dirname(__file__)
-image_path = os.path.join(base_path, "..", "sprites", "test_sprite.png")
+image_path = os.path.join(PLAYER_SPRITES, "test_sprite.png")
 
 class Player(CircleShape):
     def __init__(self, x, y):
