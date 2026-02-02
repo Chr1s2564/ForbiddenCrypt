@@ -15,11 +15,11 @@ class Player(CircleShape):
         self.image = pygame.image.load(image_path)
         self.image = pygame.transform.scale(self.image, (96, 96))
         self.original_image = self.image
+        self.rect = self.image.get_rect(center=self.position)
 
     def draw(self, screen):
         rotated = pygame.transform.rotate(self.original_image, -self.rotation)
-        rect = rotated.get_rect(center=self.position)
-        screen.blit(rotated, rect)
+        screen.blit(rotated, self.rect)
 
     def rotate(self, dt):
         self.rotation += (PLAYER_TURN_SPEED * dt)
@@ -41,6 +41,8 @@ class Player(CircleShape):
         if keys[pygame.K_d] or keys[pygame.K_RIGHT]:
             self.move_x(dt)
         if keys[pygame.K_z] or keys[pygame.K_UP]:
-            self.move_y(dt)
-        if keys[pygame.K_s] or keys[pygame.K_DOWN]:
             self.move_y(-dt)
+        if keys[pygame.K_s] or keys[pygame.K_DOWN]:
+            self.move_y(dt)
+
+        self.rect.center = self.position
