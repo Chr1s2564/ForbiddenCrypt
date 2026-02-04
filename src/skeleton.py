@@ -39,6 +39,13 @@ class Skeleton(CircleShape):
     def shoot(self, other):
         skel_shot = SkeletonShot(self.position.x, self.position.y, SHOT_RADIUS, other.position)
 
+    def get_valid_skeletons(self, skeletons):
+        valid_skeletons = [skel for skel in skeletons if hasattr(skel, "position")]
+        if not valid_skeletons:
+            return None
+        if valid_skeletons:
+            return valid_skeletons
+
     def update(self, dt, player, skeleton): # AI keeps player at shooting range but not to close
         is_moving = 0
         self.cooldown -= dt
@@ -48,6 +55,11 @@ class Skeleton(CircleShape):
         if self.position.distance_to(player.position) > 150:
             self.move_towards(player, dt)
             is_moving = 1
+
+        '''valid_skeletons = self.get_valid_skeletons(skeleton)
+        for skel in valid_skeletons:
+            if self.position.distance_to(skel.position) > 80 and self.position.distance_to(player.position) > 150:
+                self.move_away(skel, dt)'''
 
         if self.position.distance_to(player.position) < 150 and not is_moving:
             if self.cooldown > 0:

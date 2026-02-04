@@ -63,11 +63,11 @@ class Player(CircleShape):
 
         target = self.get_closest_skeleton(skeletons)
 
-        if target and is_moving == 0:
+        if target and not is_moving:
             if self.position.distance_to(target.position) < 110:
                 if self.cooldown > 0:
                     pass
                 else:
                     self.cooldown = PLAYER_SHOOT_COOLDOWN
-                self.shoot(target)
+                    self.shoot(target)
         self.rect.center = self.position
