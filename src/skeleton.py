@@ -34,10 +34,10 @@ class Skeleton(CircleShape):
             direction = direction.normalize()
         self.position += direction * SKELETON_SPEED * dt
 
-    def update(self, dt, other): # AI keeps player at shooting range but not to close
-        if self.position.distance_to(other.position) < 80:
-            self.move_away(other, dt)
-        if self.position.distance_to(other.position) > 150:
-            self.move_towards(other, dt)
+    def update(self, dt, player, skeleton): # AI keeps player at shooting range but not to close
+        if self.position.distance_to(player.position) < 80:
+            self.move_away(player, dt)
+        if self.position.distance_to(player.position) > 150:
+            self.move_towards(player, dt)
 
         self.rect.center = self.position

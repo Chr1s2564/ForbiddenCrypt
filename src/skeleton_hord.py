@@ -14,6 +14,10 @@ class SkeletonHord(pygame.sprite.Sprite):
         (80, 360)
     ]
     def __init__(self):
+        if hasattr(self, "containers"):
+            super().__init__(self.containers)
+        else:
+            super().__init__()
         pygame.sprite.Sprite.__init__(self, self.containers)
         self.spawn_timer = 0.0
 

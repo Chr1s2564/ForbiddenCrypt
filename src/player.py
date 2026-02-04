@@ -21,11 +21,12 @@ class Player(CircleShape):
         screen.blit(rotated, self.rect)
 
     def rotate(self, dt, other):
-        if self.position.distance_to(other.position) < 110:
+        pass
+        '''if self.position.distance_to(other.position) < 110:
             direction = pygame.Vector2(other.position) - self.position
             if direction.length() > 0:
                 direction = direction.normalize()
-                self.rotation += (PLAYER_TURN_SPEED * dt) * direction
+                self.rotation += (PLAYER_TURN_SPEED * dt) * direction'''
 
     def move_y(self, dt):
         unit_vector = pygame.Vector2(0, 1)
@@ -37,14 +38,17 @@ class Player(CircleShape):
         vector_speed = PLAYER_SPEED * unit_vector * dt
         self.position += vector_speed
 
-    def shoot(self):
-        shot = PlayerShot(self.position.x, self.position.y, SHOT_RADIUS )
-        unit_vector = pygame.Vector2(0, 1)
-        unit_vector.rotate(self.rotation)
-        unit_vector *= PLAYER_SHOOT_SPEED
-        shot.velocity = unit_vector
+    def get_closest_skeleton(self, skeletons):
+        valid_skeletons = [skel for skel in skeletons if hasattr(skel, "position")]
+        if not valid_skeletons:
+            return None
+        else:
+            return min(valid_skeletons, key=lambda skel: self.position.distance_to(skel.position))
 
-    def update(self, dt, other):
+    def shoot(self, other):
+        shot = PlayerShot(self.position.x, self.position.y, SHOT_RADIUS, other.position)
+
+    def update(self, dt, player, skeletons):
         keys = pygame.key.get_pressed()
         is_moving = 0
         if keys[pygame.K_q] or keys[pygame.K_LEFT]:
@@ -59,7 +63,10 @@ class Player(CircleShape):
         if keys[pygame.K_s] or keys[pygame.K_DOWN]:
             self.move_y(dt)
             is_moving = 1
-        self.rotate(dt, other)
-        if self.position.distance_to(other.position) < 110 and is_moving == 0:
-            self.shoot()
+
+        target = self.get_closest_skeleton(skeletons)
+
+        if target and is_moving == 0:
+            if self.position.distance_to(target.position) < 110:
+                self.shoot(target)
         self.rect.center = self.position

@@ -22,10 +22,11 @@ def main():
     updatable = pygame.sprite.Group()
     drawable = pygame.sprite.Group()
     skeletons = pygame.sprite.Group()
+    skel_hord = pygame.sprite.Group()
     shots = pygame.sprite.Group()
     Player.containers = (updatable, drawable)
     Skeleton.containers = (skeletons, drawable, updatable)
-    SkeletonHord.containers = (skeletons)
+    SkeletonHord.containers = (skel_hord)
     PlayerShot.containers = (updatable, drawable, shots)
 
     # Objects
@@ -41,9 +42,9 @@ def main():
         screen.fill(BLACK)
         for drawables in drawable:
             drawables.draw(screen)
-        updatable.update(dt, player)
+        updatable.update(dt, player, skeletons)
         while skel_count < 3:
-            skeletons.update(dt, player)
+            skel_hord.update(dt, player)
             skel_count += 1
         pygame.display.flip()
         dt = clock.tick(60) / 1000
