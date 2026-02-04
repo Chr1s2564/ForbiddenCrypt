@@ -1,5 +1,5 @@
 import pygame
-from constants import SHOT_RADIUS, LINE_WIDTH, PLAYER_SHOOT_SPEED
+from constants import LINE_WIDTH, PLAYER_SHOOT_SPEED, SKELETON_SHOOT_SPEED
 from circleshape import CircleShape
 
 
@@ -16,24 +16,30 @@ class PlayerShot(CircleShape):
     def draw(self, screen):
         pygame.draw.circle(screen, "blue", self.position, LINE_WIDTH)
         ## --- Shoot debug ---
-        pygame.draw.line(
+        '''pygame.draw.line(
             screen,
             "yellow",
             self.position,
             self.position + self.velocity.normalize() * 40
-        )
+        )'''
         ## --- Shoot debug ---
 
     def update(self, dt, player, skeleton):
         self.position += self.velocity * dt
 
 class SkeletonShot(CircleShape):
-    def __init__(self, x, y, radius):
+    def __init__(self, x, y, radius, player_pos):
         super().__init__(x, y, radius)
+        direction = pygame.Vector2(player_pos) - self.position
+        if direction.length() == 0:
+            direction = pygame.Vector2(0, -1)
+        if direction.length() > 0:
+            direction = direction.normalize()
+        self.velocity = direction * SKELETON_SHOOT_SPEED
 
     def draw(self, screen):
         pygame.draw.circle(screen, "red", self.position, LINE_WIDTH)
 
-    def update(self, dt, other):
+    def update(self, dt, skeleton ,other):
         self.position += self.velocity * dt
 

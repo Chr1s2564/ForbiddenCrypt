@@ -6,7 +6,7 @@ from colors import *
 from player import Player
 from skeleton import Skeleton
 from skeleton_hord import SkeletonHord
-from shot import PlayerShot
+from shot import PlayerShot, SkeletonShot
 
 def main():
     if argv[1] == "debug":
@@ -28,6 +28,7 @@ def main():
     Skeleton.containers = (skeletons, drawable, updatable)
     SkeletonHord.containers = (skel_hord)
     PlayerShot.containers = (updatable, drawable, shots)
+    SkeletonShot.containers = (updatable, drawable, shots)
 
     # Objects
     screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))

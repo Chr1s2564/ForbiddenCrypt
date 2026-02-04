@@ -1,7 +1,7 @@
 import pygame
 import os
 from circleshape import CircleShape
-from constants import PLAYER_RADIUS, PLAYER_TURN_SPEED, PLAYER_SPEED, PLAYER_SPRITES, PLAYER_SHOOT_SPEED, SHOT_RADIUS
+from constants import PLAYER_RADIUS, PLAYER_SPEED, PLAYER_SPRITES, PLAYER_SHOOT_COOLDOWN, SHOT_RADIUS
 from shot import PlayerShot
 
 #path to sprites // currently a test sprite
@@ -15,6 +15,7 @@ class Player(CircleShape):
         self.image = pygame.transform.scale(self.image, (96, 96))
         self.original_image = self.image
         self.rect = self.image.get_rect(center=self.position)
+        self.cooldown = 0
 
     def draw(self, screen):
         rotated = pygame.transform.rotate(self.original_image, -self.rotation)
@@ -22,11 +23,6 @@ class Player(CircleShape):
 
     def rotate(self, dt, other):
         pass
-        '''if self.position.distance_to(other.position) < 110:
-            direction = pygame.Vector2(other.position) - self.position
-            if direction.length() > 0:
-                direction = direction.normalize()
-                self.rotation += (PLAYER_TURN_SPEED * dt) * direction'''
 
     def move_y(self, dt):
         unit_vector = pygame.Vector2(0, 1)
@@ -51,6 +47,7 @@ class Player(CircleShape):
     def update(self, dt, player, skeletons):
         keys = pygame.key.get_pressed()
         is_moving = 0
+        self.cooldown -= dt
         if keys[pygame.K_q] or keys[pygame.K_LEFT]:
             self.move_x(-dt)
             is_moving = 1
@@ -68,5 +65,9 @@ class Player(CircleShape):
 
         if target and is_moving == 0:
             if self.position.distance_to(target.position) < 110:
+                if self.cooldown > 0:
+                    pass
+                else:
+                    self.cooldown = PLAYER_SHOOT_COOLDOWN
                 self.shoot(target)
         self.rect.center = self.position
