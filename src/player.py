@@ -1,7 +1,7 @@
 import pygame
 import os
 from circleshape import CircleShape
-from constants import PLAYER_RADIUS, PLAYER_SPEED, PLAYER_SPRITES, PLAYER_SHOOT_COOLDOWN, SHOT_RADIUS
+from constants import PLAYER_RADIUS, PLAYER_SPEED, PLAYER_SPRITES, PLAYER_SHOOT_COOLDOWN, SHOT_RADIUS, SKELETON_SHOT_DMG, PLAYER_HEALTH
 from shot import PlayerShot
 
 #path to sprites // currently a test sprite
@@ -16,6 +16,7 @@ class Player(CircleShape):
         self.original_image = self.image
         self.rect = self.image.get_rect(center=self.position)
         self.cooldown = 0
+        self.health = PLAYER_HEALTH
 
     def draw(self, screen):
         rotated = pygame.transform.rotate(self.original_image, -self.rotation)
@@ -44,11 +45,17 @@ class Player(CircleShape):
     def shoot(self, other):
         shot = PlayerShot(self.position.x, self.position.y, SHOT_RADIUS, other.position)
 
-    def update(self, dt, player, skeletons):
+    def got_shot(self, shot):
+        if self.position.distance_to(shot.position) == 0:
+            return 1
+        else:
+            return 0
+
+    def update(self, dt, player, skeletons, shots):
         keys = pygame.key.get_pressed()
         is_moving = 0
         self.cooldown -= dt
-        if keys[pygame.K_q] or keys[pygame.K_LEFT]:
+        if keys[pygame.K_q] or keys[pygame.K_LEFT]: # movements handling
             self.move_x(-dt)
             is_moving = 1
         if keys[pygame.K_d] or keys[pygame.K_RIGHT]:
@@ -61,8 +68,12 @@ class Player(CircleShape):
             self.move_y(dt)
             is_moving = 1
 
-        target = self.get_closest_skeleton(skeletons)
+        for shot in shots:
+            if self.got_shot(shot): # got shot handling
+                self.health -= SKELETON_SHOT_DMG
+                print(f"player health = {self.health}")
 
+        target = self.get_closest_skeleton(skeletons) # shooting handling
         if target and not is_moving:
             if self.position.distance_to(target.position) < 110:
                 if self.cooldown > 0:
@@ -70,4 +81,5 @@ class Player(CircleShape):
                 else:
                     self.cooldown = PLAYER_SHOOT_COOLDOWN
                     self.shoot(target)
+
         self.rect.center = self.position

@@ -43,7 +43,7 @@ def main():
         screen.fill(BLACK)
         for drawables in drawable:
             drawables.draw(screen)
-        updatable.update(dt, player, skeletons)
+        updatable.update(dt, player, skeletons, shots)
         while skel_count < 3:
             skel_hord.update(dt, player)
             skel_count += 1

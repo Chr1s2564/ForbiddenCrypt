@@ -24,7 +24,7 @@ class PlayerShot(CircleShape):
         )'''
         ## --- Shoot debug ---
 
-    def update(self, dt, player, skeleton):
+    def update(self, dt, player, skeleton, shots):
         self.position += self.velocity * dt
 
 class SkeletonShot(CircleShape):
@@ -40,6 +40,6 @@ class SkeletonShot(CircleShape):
     def draw(self, screen):
         pygame.draw.circle(screen, "red", self.position, LINE_WIDTH)
 
-    def update(self, dt, skeleton ,other):
+    def update(self, dt, skeleton ,other, shots):
         self.position += self.velocity * dt
 
