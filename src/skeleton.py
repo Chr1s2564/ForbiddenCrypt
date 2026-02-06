@@ -2,7 +2,7 @@ import os
 import pygame
 from circleshape import CircleShape
 from constants import SKELETON_SPRITES, SKELETON_TURN_SPEED, SKELETON_SPEED, SKELETON_SHOOT_COOLDOWN, SHOT_RADIUS, SKELETON_HEALTH, PLAYER_SHOT_DMG
-from shot import SkeletonShot
+from shot import SkeletonShot, PlayerShot
 
 # image path
 image_path = os.path.join(SKELETON_SPRITES, 'test_skeleton.png')
@@ -41,7 +41,7 @@ class Skeleton(CircleShape):
         skel_shot = SkeletonShot(self.position.x, self.position.y, SHOT_RADIUS, other.position)
 
     def got_shot(self, shot):
-        if self.position.distance_to(shot.position) == 0:
+        if self.position.distance_to(shot.position) == 0 and shot.source == "skeleton":
             return 1
         else:
             return 0
@@ -67,6 +67,10 @@ class Skeleton(CircleShape):
             if self.got_shot(shot): # Got_shot handling
                 self.health -= PLAYER_SHOT_DMG
                 print(f"skel health = {self.health}")
+
+
+        if self.health <= 0:
+            self.kill()
 
         '''valid_skeletons = self.get_valid_skeletons(skeleton)
         for skel in valid_skeletons:
