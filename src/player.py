@@ -1,7 +1,7 @@
 import pygame
 import os
 from circleshape import CircleShape
-from constants import PLAYER_RADIUS, PLAYER_SPEED, PLAYER_SPRITES, PLAYER_SHOOT_COOLDOWN, SHOT_RADIUS, SKELETON_SHOT_DMG, PLAYER_HEALTH
+from constants import PLAYER_RADIUS, PLAYER_SPEED, PLAYER_SPRITES, PLAYER_SHOOT_COOLDOWN, SHOT_RADIUS, SKELETON_SHOT_DMG, PLAYER_HEALTH, HIT_RADIUS
 from shot import PlayerShot, SkeletonShot
 
 #path to sprites // currently a test sprite
@@ -17,6 +17,7 @@ class Player(CircleShape):
         self.rect = self.image.get_rect(center=self.position)
         self.cooldown = 0
         self.health = PLAYER_HEALTH
+        self.is_alive = True
 
     def draw(self, screen):
         rotated = pygame.transform.rotate(self.original_image, -self.rotation)
@@ -46,7 +47,7 @@ class Player(CircleShape):
         shot = PlayerShot(self.position.x, self.position.y, SHOT_RADIUS, other.position)
 
     def got_shot(self, shot):
-        if self.position.distance_to(shot.position) == 0 and shot.source == "player":
+        if self.position.distance_to(shot.position) <= HIT_RADIUS and isinstance(shot, SkeletonShot):
             return 1
         else:
             return 0
@@ -72,9 +73,11 @@ class Player(CircleShape):
             if self.got_shot(shot): # got shot handling
                 self.health -= SKELETON_SHOT_DMG
                 print(f"player health = {self.health}")
+                shot.kill()
 
         if self.health <= 0:
             self.kill()
+            self.is_alive = False
 
         target = self.get_closest_skeleton(skeletons) # shooting handling
         if target and not is_moving:

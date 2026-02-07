@@ -1,7 +1,7 @@
 import os
 import pygame
 from circleshape import CircleShape
-from constants import SKELETON_SPRITES, SKELETON_TURN_SPEED, SKELETON_SPEED, SKELETON_SHOOT_COOLDOWN, SHOT_RADIUS, SKELETON_HEALTH, PLAYER_SHOT_DMG
+from constants import SKELETON_SPRITES, SKELETON_TURN_SPEED, SKELETON_SPEED, SKELETON_SHOOT_COOLDOWN, SHOT_RADIUS, SKELETON_HEALTH, PLAYER_SHOT_DMG, HIT_RADIUS
 from shot import SkeletonShot, PlayerShot
 
 # image path
@@ -41,7 +41,7 @@ class Skeleton(CircleShape):
         skel_shot = SkeletonShot(self.position.x, self.position.y, SHOT_RADIUS, other.position)
 
     def got_shot(self, shot):
-        if self.position.distance_to(shot.position) == 0 and shot.source == "skeleton":
+        if self.position.distance_to(shot.position) <= HIT_RADIUS and isinstance(shot, PlayerShot):
             return 1
         else:
             return 0
@@ -64,9 +64,10 @@ class Skeleton(CircleShape):
             is_moving = 1
 
         for shot in shots:
-            if self.got_shot(shot): # Got_shot handling
+            if isinstance(shot, PlayerShot) and self.got_shot(shot): # Got_shot handling
                 self.health -= PLAYER_SHOT_DMG
                 print(f"skel health = {self.health}")
+                shot.kill()
 
 
         if self.health <= 0:
@@ -77,7 +78,7 @@ class Skeleton(CircleShape):
             if self.position.distance_to(skel.position) > 80 and self.position.distance_to(player.position) > 150:
                 self.move_away(skel, dt)'''
 
-        if self.position.distance_to(player.position) < 150 and not is_moving: # shooting handling
+        if self.position.distance_to(player.position) < 150 and not is_moving and player.is_alive: # shooting handling
             if self.cooldown > 0:
                 pass
             else:
