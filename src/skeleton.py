@@ -69,14 +69,14 @@ class Skeleton(CircleShape):
                 print(f"skel health = {self.health}")
                 shot.kill()
 
-
         if self.health <= 0:
             self.kill()
 
         '''valid_skeletons = self.get_valid_skeletons(skeleton)
         for skel in valid_skeletons:
-            if self.position.distance_to(skel.position) > 80 and self.position.distance_to(player.position) > 150:
-                self.move_away(skel, dt)'''
+            if self.position.distance_to(skel.position) > 80 and self.position.distance_to(player.position) < 150:
+                self.move_away(skel, dt)
+                self.move_towards(player, dt)'''
 
         if self.position.distance_to(player.position) < 150 and not is_moving and player.is_alive: # shooting handling
             if self.cooldown > 0:
