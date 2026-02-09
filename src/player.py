@@ -86,6 +86,6 @@ class Player(CircleShape):
                     pass
                 else:
                     self.cooldown = PLAYER_SHOOT_COOLDOWN
-                    self.shoot(target)
+                    #self.shoot(target)
 
         self.rect.center = self.position

@@ -26,6 +26,11 @@ SHOT_RADIUS = 5
 LINE_WIDTH = 2
 HIT_RADIUS = 10
 
+# Map constants
+MAP_WIDTH = 1280
+MAP_HEIGHT = 720
+WALL_THICKNESS = 30
+
 # FILE SOURCES
 BASE_PATH = os.path.dirname(__file__)
 PLAYER_SPRITES = os.path.join(BASE_PATH, '..', 'sprites', 'mage')

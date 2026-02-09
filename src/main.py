@@ -1,6 +1,6 @@
 import pygame
 from sys import argv
-from constants import SCREEN_WIDTH, SCREEN_HEIGHT
+from constants import SCREEN_WIDTH, SCREEN_HEIGHT, MAP_WIDTH, MAP_HEIGHT, WALL_THICKNESS
 from logger import logger_setup
 from colors import *
 from player import Player
@@ -30,6 +30,14 @@ def main():
     PlayerShot.containers = (updatable, drawable, shots)
     SkeletonShot.containers = (updatable, drawable, shots)
 
+    # Map Borders
+    walls = [
+        pygame.Rect(0, 0, MAP_WIDTH, WALL_THICKNESS),
+        pygame.Rect(0, MAP_HEIGHT - WALL_THICKNESS, MAP_WIDTH, WALL_THICKNESS),
+        pygame.Rect(0, 0, WALL_THICKNESS, MAP_HEIGHT),
+        pygame.Rect(MAP_WIDTH - WALL_THICKNESS, 0, WALL_THICKNESS, MAP_HEIGHT)
+    ]
+
     # Objects
     screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
     player = Player(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2)
@@ -43,7 +51,24 @@ def main():
         screen.fill(BLACK)
         for drawables in drawable:
             drawables.draw(screen)
+
+        old_player_x = player.position.x
+        old_player_y = player.position.y
+        for skeleton in skeletons:
+            old_skel_x = skeleton.position.x
+            old_skel_y = skeleton.position.y
+
         updatable.update(dt, player, skeletons, shots)
+
+        for wall in walls:
+            if player.rect.colliderect(wall):
+                player.position.x = old_player_x
+                player.position.y = old_player_y
+            for skeleton in skeletons:
+                if skeleton.rect.colliderect(wall):
+                    skeleton.position.x = old_skel_x
+                    skeleton.position.y = old_skel_y
+
         while skel_count < 3:
             skel_hord.update(dt, player)
             skel_count += 1

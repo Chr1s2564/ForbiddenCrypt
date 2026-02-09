@@ -83,6 +83,6 @@ class Skeleton(CircleShape):
                 pass
             else:
                 self.cooldown = SKELETON_SHOOT_COOLDOWN
-                self.shoot(player)
+                #self.shoot(player)
 
         self.rect.center = self.position
