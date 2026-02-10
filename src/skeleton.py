@@ -1,5 +1,7 @@
 import os
 import pygame
+import random
+import math
 from circleshape import CircleShape
 from constants import SKELETON_SPRITES, SKELETON_TURN_SPEED, SKELETON_SPEED, SKELETON_SHOOT_COOLDOWN, SHOT_RADIUS, SKELETON_HEALTH, PLAYER_SHOT_DMG, HIT_RADIUS
 from shot import SkeletonShot, PlayerShot
@@ -17,6 +19,9 @@ class Skeleton(CircleShape):
         self.rect = self.image.get_rect(center=self.position)
         self.cooldown = 0
         self.health = SKELETON_HEALTH
+        self.state = "wander"
+        self.wander_timer = 0
+        self.wander_target = None
 
     def draw(self, screen):
         rotated = pygame.transform.rotate(self.original_image, -self.rotation)
@@ -24,6 +29,21 @@ class Skeleton(CircleShape):
 
     def rotate(self, dt):
         self.rotation += (dt * SKELETON_TURN_SPEED)
+
+    def wander(self, dt):
+        self.wander_timer -= dt
+        if not self.wander_target or self.wander_timer <= 0:
+            angle = random.uniform(0, math.pi * 2)
+            distance = random.randint(50, 200)
+            self.wander_target = pygame.Vector2(
+                self.position.x + math.cos(angle) * distance,
+                self.position.y + math.sin(angle) * distance
+            )
+            self.wander_timer = random.uniform(1.5, 3)
+        direction = self.wander_target - self.position
+        if direction.length() > 5:
+            direction = direction.normalize()
+            self.position += direction * SKELETON_SPEED * dt
 
     def move_towards(self, other, dt):
         direction = pygame.Vector2(other.position) - self.position
@@ -56,12 +76,28 @@ class Skeleton(CircleShape):
     def update(self, dt, player, skeleton, shots):
         is_moving = 0
         self.cooldown -= dt
-        if self.position.distance_to(player.position) < 80: # AI keeps player at shooting range but not to close
-            self.move_away(player, dt)
-            is_moving = 1
-        if self.position.distance_to(player.position) > 150:
-            self.move_towards(player, dt)
-            is_moving = 1
+        distance = self.position.distance_to(player.position)
+
+        if distance < 200:
+            self.state = "combat"
+        else:
+            self.state = "wander"
+
+        if self.state == "wander":
+            self.wander(dt)
+        elif self.state == "combat":
+            if distance < 80: # AI keeps player at shooting range but not to close
+                self.move_away(player, dt)
+                is_moving = 1
+            if distance > 150:
+                self.move_towards(player, dt)
+                is_moving = 1
+            if distance < 150 and not is_moving and player.is_alive:  # shooting handling
+                if self.cooldown > 0:
+                    pass
+                else:
+                    self.cooldown = SKELETON_SHOOT_COOLDOWN
+                    # self.shoot(player)
 
         for shot in shots:
             if isinstance(shot, PlayerShot) and self.got_shot(shot): # Got_shot handling
@@ -71,18 +107,5 @@ class Skeleton(CircleShape):
 
         if self.health <= 0:
             self.kill()
-
-        '''valid_skeletons = self.get_valid_skeletons(skeleton)
-        for skel in valid_skeletons:
-            if self.position.distance_to(skel.position) > 80 and self.position.distance_to(player.position) < 150:
-                self.move_away(skel, dt)
-                self.move_towards(player, dt)'''
-
-        if self.position.distance_to(player.position) < 150 and not is_moving and player.is_alive: # shooting handling
-            if self.cooldown > 0:
-                pass
-            else:
-                self.cooldown = SKELETON_SHOOT_COOLDOWN
-                #self.shoot(player)
 
         self.rect.center = self.position

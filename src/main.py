@@ -52,22 +52,23 @@ def main():
         for drawables in drawable:
             drawables.draw(screen)
 
-        old_player_x = player.position.x
-        old_player_y = player.position.y
+        old_pos = player.position.copy()
         for skeleton in skeletons:
-            old_skel_x = skeleton.position.x
-            old_skel_y = skeleton.position.y
+            old_skel_pos = skeleton.position.copy()
 
         updatable.update(dt, player, skeletons, shots)
 
+        skel_walled = 0
         for wall in walls:
             if player.rect.colliderect(wall):
-                player.position.x = old_player_x
-                player.position.y = old_player_y
+                player.position = old_pos
             for skeleton in skeletons:
                 if skeleton.rect.colliderect(wall):
-                    skeleton.position.x = old_skel_x
-                    skeleton.position.y = old_skel_y
+                    skeleton.position = old_skel_pos
+                    skel_walled = 1
+                if skel_walled: # Change direction if collides with wall
+                    skeleton.wander_timer = 0
+                    skeleton.wander_target = None
 
         while skel_count < 3:
             skel_hord.update(dt, player)

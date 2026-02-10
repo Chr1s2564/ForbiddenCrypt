@@ -29,7 +29,7 @@ HIT_RADIUS = 10
 # Map constants
 MAP_WIDTH = 1280
 MAP_HEIGHT = 720
-WALL_THICKNESS = 30
+WALL_THICKNESS = 10
 
 # FILE SOURCES
 BASE_PATH = os.path.dirname(__file__)
