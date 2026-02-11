@@ -30,7 +30,7 @@ class Skeleton(CircleShape):
     def rotate(self, dt):
         self.rotation += (dt * SKELETON_TURN_SPEED)
 
-    def wander(self, dt):
+    def wander(self, dt, skeletons):
         self.wander_timer -= dt
         if not self.wander_target or self.wander_timer <= 0:
             angle = random.uniform(0, math.pi * 2)
@@ -44,6 +44,14 @@ class Skeleton(CircleShape):
         if direction.length() > 5:
             direction = direction.normalize()
             self.position += direction * SKELETON_SPEED * dt
+        old_pos = self.position.copy()
+        for other in skeletons:
+            if other == self:
+                continue
+            if other.rect.colliderect(self.rect):
+                self.position = old_pos
+                self.rect.center = self.position
+                return
 
     def move_towards(self, other, dt):
         direction = pygame.Vector2(other.position) - self.position
@@ -84,7 +92,7 @@ class Skeleton(CircleShape):
             self.state = "wander"
 
         if self.state == "wander":
-            self.wander(dt)
+            self.wander(dt, skeleton)
         elif self.state == "combat":
             if distance < 80: # AI keeps player at shooting range but not to close
                 self.move_away(player, dt)
