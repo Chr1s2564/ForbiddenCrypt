@@ -31,7 +31,7 @@ class PlayerShot(CircleShape):
         else:
             return 0
 
-    def update(self, dt, player, skeletons, shots):
+    def update(self, dt, player, skeletons, shots, screen):
         self.position += self.velocity * dt
         for skeleton in skeletons:
             if self.collides_with(skeleton) == 1:
@@ -58,7 +58,7 @@ class SkeletonShot(CircleShape):
         else:
             return 0
 
-    def update(self, dt, player, skeletons, shots):
+    def update(self, dt, player, skeletons, shots, screen):
         self.position += self.velocity * dt
         if self.collides_with(player):
             self.kill()

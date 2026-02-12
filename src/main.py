@@ -56,7 +56,7 @@ def main():
         for skeleton in skeletons:
             old_skel_pos = skeleton.position.copy()
 
-        updatable.update(dt, player, skeletons, shots)
+        updatable.update(dt, player, skeletons, shots, screen)
 
         skel_walled = 0
         for wall in walls:
@@ -72,7 +72,7 @@ def main():
 
         while skel_count < 3:
             skel_hord.update(dt, player)
-            skel_count += 1
+            skel_count += 1.
         pygame.display.flip()
         dt = clock.tick(60) / 1000
 

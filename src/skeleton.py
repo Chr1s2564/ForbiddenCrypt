@@ -81,7 +81,7 @@ class Skeleton(CircleShape):
         if valid_skeletons:
             return valid_skeletons
 
-    def update(self, dt, player, skeleton, shots):
+    def update(self, dt, player, skeleton, shots, screen):
         is_moving = 0
         self.cooldown -= dt
         distance = self.position.distance_to(player.position)
@@ -105,7 +105,7 @@ class Skeleton(CircleShape):
                     pass
                 else:
                     self.cooldown = SKELETON_SHOOT_COOLDOWN
-                    # self.shoot(player)
+                    self.shoot(player)
 
         for shot in shots:
             if isinstance(shot, PlayerShot) and self.got_shot(shot): # Got_shot handling

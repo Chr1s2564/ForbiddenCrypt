@@ -52,10 +52,21 @@ class Player(CircleShape):
         else:
             return 0
 
-    def update(self, dt, player, skeletons, shots):
+    def draw_health_bar(self, screen):
+        bar_width = self.rect.width
+        bar_height = 6
+        x = self.position.x - 40
+        y = self.position.y - 40
+        ratio = self.health / PLAYER_HEALTH
+        pygame.draw.rect(screen, (100, 0, 0), (x, y, bar_width, bar_height))
+        pygame.draw.rect(screen, (0, 255, 0), (x, y, bar_width * ratio, bar_height))
+        pygame.draw.rect(screen, (255, 255, 255), (x, y, bar_width, bar_height), 1)
+
+    def update(self, dt, player, skeletons, shots, screen):
         keys = pygame.key.get_pressed()
         is_moving = 0
         self.cooldown -= dt
+        self.draw_health_bar(screen)
         if keys[pygame.K_q] or keys[pygame.K_LEFT]: # movements handling
             self.move_x(-dt)
             is_moving = 1
